@@ -9,6 +9,8 @@ obj/
 *.userosscache
 *.sln.docstates
 
+.env
+
 # .NET Core
 project.lock.json
 project.fragment.lock.json

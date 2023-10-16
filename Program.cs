@@ -6,11 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using TavisBot.Common;
 using TavisBot.Init;
 using TavisBot.Services;
+using dotenv.net;
 
-var config = new ConfigurationBuilder()
-    .AddJsonFile($"appsettings.json")
+var builder = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
+
+DotEnv.Load(options: new DotEnvOptions(probeForEnv: true, ignoreExceptions: false));
 
 var discordClientConfig = new DiscordSocketConfig()
 {
@@ -30,7 +32,7 @@ Bootstrapper.Init();
 Bootstrapper.RegisterInstance(client);
 Bootstrapper.RegisterInstance(commands);
 Bootstrapper.RegisterType<ICommandHandler, CommandHandler>();
-Bootstrapper.RegisterInstance(config);
+Bootstrapper.RegisterInstance(builder);
 
 await MainAsync();
 
@@ -43,7 +45,9 @@ async Task MainAsync()
     await Logger.Log(LogSeverity.Info, "ShardReady", $"Shard Number {shard.ShardId} is connected and ready!");
   };
 
-  var token = config.GetRequiredSection("Settings")["DiscordBotToken"];
+  var envVars = DotEnv.Read();
+  var token = envVars["DISCORD_BOT_TOKEN"];
+
   if (string.IsNullOrWhiteSpace(token))
   {
     await Logger.Log(LogSeverity.Error, $"{nameof(Program)} | {nameof(MainAsync)}", "Token is null or empty.");
