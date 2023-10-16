@@ -1,0 +1,9 @@
+
+version: '3.4'
+
+services:
+  tavisdiscordbot:
+    image: tavisdiscordbot
+    build:
+      context: .
+      dockerfile: ./Dockerfile
